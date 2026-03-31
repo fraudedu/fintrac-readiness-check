@@ -2,7 +2,7 @@
 
 **A free, self-serve compliance gap assessment tool for Canadian businesses subject to the *Proceeds of Crime (Money Laundering) and Terrorist Financing Act* (PCMLTFA).**
 
-🔗 [**Live Tool →**](https://your-app.streamlit.app)  |  🎯 [**View Demo Report →**](https://your-app.streamlit.app?demo=true)
+🔗 [**Live Tool →**](https://fintrac-readiness.streamlit.app/)  |  🎯 [**View Demo Report →**](https://fintrac-readiness.streamlit.app/?demo=true)
 
 \---
 
