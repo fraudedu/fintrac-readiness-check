@@ -31,15 +31,16 @@ DEMO_ANSWERS = {
     # ── Pillar 2: Policies & Procedures ──────────────────────────────────────
     # Downloaded a template, never customised it
     "p2_q0": "Yes — but they are generic/template-based and not tailored to your business",
-    "p2_q1": "Partial",
-    "p2_q2": "No",
-    "p2_q3": "No",
-    "p2_q4": "No",
-    "p2_q5": "Partial",
-    "p2_q6": "No",
-    "p2_q7": "No — more than 2 years ago / never reviewed since creation",
-    "p2_q8": "No — still operating on old or no policies",
-    "p2_q9": "Partial — they exist but staff awareness is inconsistent",
+    "p2_q1": "Partial — some elements are addressed but not all",   # ← NEW: compliance program coverage
+    "p2_q2": "Partial",        # was p2_q1
+    "p2_q3": "No",             # was p2_q2
+    "p2_q4": "No",             # was p2_q3
+    "p2_q5": "No",             # was p2_q4
+    "p2_q6": "Partial",        # was p2_q5
+    "p2_q7": "No",             # was p2_q6
+    "p2_q8": "No — more than 2 years ago / never reviewed since creation",  # was p2_q7
+    "p2_q9": "No — still operating on old or no policies",                  # was p2_q8
+    "p2_q10": "Partial — they exist but staff awareness is inconsistent",   # was p2_q9
 
     # ── Pillar 3: Risk Assessment ─────────────────────────────────────────────
     # Nothing documented — common for newly-obligated entities
@@ -86,7 +87,8 @@ DEMO_ANSWERS = {
     "rep_q1": "No — we were not aware of this timing requirement",
     "rep_q2": "No",
     "rep_q3": "Partial — we are aware of the requirement but procedures are not formalised",
-    "rep_q4": "Not applicable — we do not conduct EFTs",
+    "rep_q4": "Not applicable — we do not conduct international EFTs",
+    "rep_q5": "Not applicable — we do not conduct EFTs",
     "rep_q5": "Not applicable — we do not handle virtual currency",
 
     # ── Record Keeping ────────────────────────────────────────────────────────
