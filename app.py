@@ -6,10 +6,12 @@ Run with: streamlit run app.py
 """
 
 import streamlit as st
-from questions import SECTORS, PILLAR_QUESTIONS, SECTOR_QUESTIONS, SCORE_MAP, get_score
+import streamlit.components.v1
+from questions import SECTORS, PILLAR_QUESTIONS, SECTOR_QUESTIONS, SCORE_MAP
 from report import generate_report_html
 from demo import load_demo
 from pdf_export import generate_pdf
+from offers import render_offer_card
 import datetime
 
 # ─── Page Config ────────────────────────────────────────────────────────────────
@@ -72,6 +74,7 @@ st.markdown("""
         .rag-red    { background: #ffebee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .disclaimer { background: #f9f9f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .stButton, .stDownloadButton { display: none !important; }
+        .print-section { page-break-before: always; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -103,6 +106,11 @@ if st.query_params.get("demo") == "true" and st.session_state.page == "intro":
 # ─── Navigation helpers ──────────────────────────────────────────────────────────
 def go(page):
     st.session_state.page = page
+    # Scroll to top on page navigation
+    st.components.v1.html(
+        "<script>window.parent.document.querySelector('.main').scrollTo(0, 0);</script>",
+        height=0,
+    )
     st.rerun()
 
 def answer_key(section, qnum):
@@ -162,6 +170,52 @@ def render_questions(section_key, questions):
     return all_answered
 
 
+# ─── Disclaimer text ─────────────────────────────────────────────────────────────
+DISCLAIMER_TEXT = """**Disclaimer & Terms of Use**
+*Last updated: April 06, 2026*
+
+**1. Nature of Service**
+This tool is an automated self-assessment provided for educational and informational purposes only. It is designed to help users identify potential compliance gaps at a high level. It does not constitute legal, regulatory, accounting, financial, or professional compliance advice. Use of this tool does not create a solicitor-client, consultant-client, or any other professional advisory relationship.
+
+**2. No Compliance Determination**
+Results are indicative only and are based solely on the answers selected by the user. This tool does not certify compliance, does not constitute a FINTRAC assessment, and does not guarantee compliance with the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA), the associated regulations, FINTRAC guidance, or any other federal, provincial, or territorial legal requirement. Regulatory obligations are fact-specific and may differ based on entity type, activities, geography, and operating model.
+
+**3. User Responsibility**
+The user is solely responsible for the accuracy, completeness, and truthfulness of all inputs. The user is also responsible for independently verifying current legal and regulatory requirements before acting on any output from this tool. Laws, regulations, and FINTRAC guidance may change, and this tool may not reflect the most current version at the time of use.
+
+**4. Scope Limitation**
+This tool is limited to a preliminary AML/ATF self-assessment. It does not assess all possible obligations under federal or provincial law, and it does not replace a formal compliance program review, legal review, internal audit, or independent AML/ATF consultation.
+
+**5. No Reliance**
+Users agree not to rely on this tool or its output as the sole basis for compliance decisions, regulatory filings, or operational changes. Any reliance on the tool is at the user's own risk.
+
+**6. Data Handling and Privacy**
+This tool does not collect, store, or process client data, transaction data, or other personally identifiable information through the questionnaire. Responses are anonymous and used only to generate results within the current session. No analytics tools are used on this site.
+
+**7. Limitation of Liability**
+To the maximum extent permitted by applicable law, Asset Tech, its owners, officers, employees, contractors, affiliates, and agents shall not be liable for any direct, indirect, incidental, consequential, special, exemplary, or punitive damages, losses, penalties, fines, administrative monetary penalties, claims, costs, or expenses arising from or related to the use of, or reliance on, this tool or its results.
+
+**8. Indemnity**
+To the maximum extent permitted by law, the user agrees to indemnify, defend, and hold harmless Asset Tech and its affiliates from and against any claims, liabilities, losses, damages, costs, and expenses arising out of the user's use of this tool, the user's inputs, the user's reliance on the results, or the user's failure to obtain appropriate professional advice.
+
+**9. Governing Law**
+These Terms of Use are governed by the laws of the Province of Alberta and the federal laws of Canada applicable therein. Any dispute arising from or relating to this tool shall be subject to the exclusive jurisdiction of the courts of Alberta, unless applicable law requires otherwise.
+
+**10. Changes and Availability**
+Asset Tech may update, suspend, or discontinue this tool or these Terms of Use at any time without notice. Continued use of the tool after any update constitutes acceptance of the revised terms.
+
+**11. Acceptance**
+By checking the box below and clicking "Begin Assessment," you confirm that you have read, understood, and agree to these Terms of Use and Disclaimer.
+"""
+
+DISCLAIMER_SHORT = (
+    "This tool provides a preliminary self-assessment only. Results are a heuristic indicator — "
+    "they do not certify compliance, constitute a FINTRAC assessment, or replace professional legal "
+    "or compliance advice. Do not rely on this output as the sole basis for compliance decisions, "
+    "regulatory filings, or operational changes. © Asset Tech | Last updated: April 06, 2026"
+)
+
+
 # ─── PAGE: Intro ─────────────────────────────────────────────────────────────────
 def page_intro():
     st.markdown("# 🍁 FINTRAC Readiness Assessment")
@@ -176,10 +230,37 @@ def page_intro():
         st.markdown("**📊 Instant Report**\nRAG scores + action plan")
 
     st.markdown("---")
+
+    # ── Privacy statement ──
     st.markdown("""
-This tool helps Canadian businesses assess their compliance with the 
-*Proceeds of Crime (Money Laundering) and Terrorist Financing Act* (PCMLTFA) 
-and FINTRAC's associated regulations — including the significant changes 
+<div style="background:#e8f5e9; border-left:4px solid #388e3c; padding:10px 16px;
+            border-radius:4px; margin-bottom:16px; color:#1a1a2e;">
+<strong>🔒 Privacy:</strong> This tool does not collect, store, or process any personal
+information, client data, or transaction data. Your responses are anonymous and exist
+only within your current browser session. No analytics tools are used on this site.
+</div>
+""", unsafe_allow_html=True)
+
+    # ── Full disclaimer ──
+    with st.expander("📋 Disclaimer & Terms of Use — read before proceeding", expanded=True):
+        st.markdown(DISCLAIMER_TEXT)
+
+    # ── Checkbox gate ──
+    agreed = st.checkbox(
+        "I have read and agree to the Disclaimer & Terms of Use.",
+        key="terms_agreed",
+        value=st.session_state.get("terms_agreed_value", False),
+    )
+    if agreed:
+        st.session_state["terms_agreed_value"] = True
+
+    st.markdown("---")
+
+    # ── Who this is for ──
+    st.markdown("""
+This tool helps Canadian businesses assess their compliance with the
+*Proceeds of Crime (Money Laundering) and Terrorist Financing Act* (PCMLTFA)
+and FINTRAC's associated regulations — including the significant changes
 that came into force in **April 2025** and **October 2025**.
 
 **Who this is for:**
@@ -188,25 +269,23 @@ that came into force in **April 2025** and **October 2025**.
 - Compliance officers, consultants, and legal advisors conducting preliminary gap assessments
 """)
 
-    st.markdown("""
-<div class='disclaimer'>
-<strong>⚠️ Disclaimer:</strong> This tool provides a preliminary self-assessment only and does not 
-constitute legal or compliance advice. Results are indicative, not definitive. 
-Consult a qualified AML compliance professional or legal counsel for a formal compliance review. 
-All guidance references are sourced from <a href="https://fintrac-canafe.canada.ca" target="_blank">fintrac-canafe.canada.ca</a>.
-</div>
-""", unsafe_allow_html=True)
-
-    st.markdown("<div class='nav-btn'>", unsafe_allow_html=True)
+    # ── Buttons ──
     col_a, col_b = st.columns([3, 1])
     with col_a:
-        if st.button("Begin Assessment →", type="primary", use_container_width=True):
+        if st.button(
+            "Begin Assessment →",
+            type="primary",
+            use_container_width=True,
+            disabled=not agreed,
+        ):
             go("classifier")
     with col_b:
         if st.button("View Demo", use_container_width=True):
             load_demo()
             st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
+
+    if not agreed:
+        st.caption("Please read and accept the Disclaimer & Terms of Use to begin.")
 
 
 # ─── PAGE: Entity Classifier ─────────────────────────────────────────────────────
@@ -358,12 +437,9 @@ def compute_scores():
         for i, q in enumerate(questions):
             key = answer_key(section_key, i)
             ans = answers.get(key)
-            #HW score = SCORE_MAP.get(ans, 0)
-            score = get_score(ans)    #HW
-            if score is None:   #HW not applicable — already handled below, so skip
-                continue        #HW 
-            #HW if ans and ans.lower().startswith("not applicable"):
-            #HW     continue
+            score = SCORE_MAP.get(ans, 0)
+            if ans and ans.lower().startswith("not applicable"):
+                continue
             max_pts += 2
             pts += score
             if score < 2:
@@ -381,12 +457,9 @@ def compute_scores():
         for i, q in enumerate(s_questions):
             key = answer_key(f"sec_{sector_key}", i)
             ans = answers.get(key)
-            #HW score = SCORE_MAP.get(ans, 0)
-            score = get_score(ans)    #HW
-            if score is None:   #HW not applicable — already handled below, so skip
-                continue        #HW
-            #HW if ans and ans.lower().startswith("not applicable"):
-            #HW     continue
+            score = SCORE_MAP.get(ans, 0)
+            if ans and ans.lower().startswith("not applicable"):
+                continue
             max_pts += 2
             pts += score
             if score < 2:
@@ -448,9 +521,33 @@ def page_report():
         </div>
         """, unsafe_allow_html=True)
 
+    # ── Score warning banner — shown for all results ──
+    st.markdown("""
+<div style="background:#fff8e1; border-left:4px solid #f9a825; padding:10px 16px;
+            border-radius:4px; margin:12px 0; color:#1a1a2e;">
+<strong>⚠️ Important:</strong> This score is a heuristic indicator based solely on your
+self-reported answers. It does not certify compliance, does not constitute a FINTRAC
+assessment, and must not be used as the sole basis for compliance decisions, regulatory
+filings, or operational changes. Consult a qualified AML/ATF professional for a formal review.
+</div>
+""", unsafe_allow_html=True)
+
+    # ── High-risk banner — shown only for Red overall score ──
+    if overall_rag == "red":
+        st.markdown("""
+<div style="background:#ffebee; border:2px solid #c62828; padding:12px 16px;
+            border-radius:4px; margin-bottom:12px; color:#1a1a2e;">
+<strong>🔴 Significant gaps identified.</strong> Do not rely on this output for regulatory
+filings, submissions to FINTRAC, or compliance representations to third parties.
+Engage a qualified AML/ATF compliance professional or legal counsel before taking
+action based on these results.
+</div>
+""", unsafe_allow_html=True)
+
     st.markdown("---")
 
     # ── Pillar-by-pillar breakdown ──
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
     st.markdown("### Compliance Pillar Breakdown")
 
     for sec_key, data in sections.items():
@@ -465,10 +562,12 @@ def page_report():
             <span style='float:right; font-weight:700; color:{bar_color};'>{pct}%</span>
         </div>
         """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
     # ── Top gaps ──
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
     st.markdown("### 🔍 Priority Gaps")
 
     all_gaps = []
@@ -477,7 +576,6 @@ def page_report():
         for gap in data["gaps"]:
             all_gaps.append({**gap, "section": label})
 
-    # Sort by score (0 first, then 1)
     all_gaps.sort(key=lambda x: x["score"])
 
     if not all_gaps:
@@ -488,25 +586,27 @@ def page_report():
         amber_gaps = [g for g in all_gaps if g["score"] == 1]
 
         if red_gaps:
-            st.markdown("#### 🔴 Critical — Address Immediately")
+            st.markdown("#### 🔴 Critical")
             for g in red_gaps[:8]:
                 st.markdown(f"- **{g['section']}:** {g['q']}")
 
         if amber_gaps:
-            st.markdown("#### 🟡 Moderate — Address Within 60 Days")
+            st.markdown("#### 🟡 Moderate")
             for g in amber_gaps[:8]:
                 st.markdown(f"- **{g['section']}:** {g['q']}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
     # ── Action plan ──
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
     st.markdown("### 📅 Recommended Action Plan")
 
     newly_obligated = st.session_state.obligation_length in ["Less than 6 months", "6–18 months"]
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("**30 Days**")
+        st.markdown("**Phase 1**")
         if sections.get("p1", {}).get("pct", 100) < 80:
             st.markdown("- Formally appoint a Compliance Officer with documented authority")
         if sections.get("p3", {}).get("pct", 100) < 80:
@@ -516,7 +616,7 @@ def page_report():
         st.markdown("- Register with FINTRAC if required for your sector")
 
     with col2:
-        st.markdown("**60 Days**")
+        st.markdown("**Phase 2**")
         if sections.get("p2", {}).get("pct", 100) < 80:
             st.markdown("- Draft or update sector-specific policies and procedures")
         if sections.get("kyc", {}).get("pct", 100) < 80:
@@ -526,7 +626,7 @@ def page_report():
         st.markdown("- Review and implement Ministerial Directive obligations")
 
     with col3:
-        st.markdown("**90 Days**")
+        st.markdown("**Phase 3**")
         if sections.get("p5", {}).get("pct", 100) < 80:
             st.markdown("- Schedule an independent effectiveness review")
         if sections.get("rep", {}).get("pct", 100) < 80:
@@ -534,10 +634,12 @@ def page_report():
         if sections.get("rec", {}).get("pct", 100) < 80:
             st.markdown("- Implement a 5-year records retention policy")
         st.markdown("- Test your STR identification process with a tabletop scenario")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
     # ── Key FINTRAC resources ──
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
     st.markdown("### 📚 Key FINTRAC Resources for Your Sector")
     sector_info = SECTORS.get(entity, {})
     sector_source = sector_info.get("source", "")
@@ -555,28 +657,35 @@ def page_report():
 
     for label, url in resources:
         st.markdown(f"- [{label}]({url})")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("---")
+#    st.markdown("---")
+
+    # ── Sector-specific product offer ──
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
+    sector_key = SECTORS.get(st.session_state.entity_type, {}).get("key", "other")
+    render_offer_card(sector_key)
 
     # ── Disclaimer ──
-    st.markdown("""
-<div class='disclaimer'>
-<strong>⚠️ Important Disclaimer:</strong> This assessment tool provides a high-level preliminary 
-self-assessment only. It does not constitute legal advice, compliance certification, or a formal 
-FINTRAC gap assessment. Results reflect the answers provided and may not capture all obligations 
-applicable to your specific circumstances. Regulatory obligations under the PCMLTFA and associated 
-Regulations are complex and fact-specific. You should consult a qualified AML/ATF compliance 
-professional or legal counsel before relying on these results. All guidance links reference 
-<a href="https://fintrac-canafe.canada.ca" target="_blank">fintrac-canafe.canada.ca</a> — 
-always verify against the current published version.
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("<div class='print-section'>", unsafe_allow_html=True)
+#    st.markdown("""
+#<div class='disclaimer'>
+#<strong>⚠️ Important Disclaimer:</strong> This assessment tool provides a high-level preliminary
+#self-assessment only. It does not constitute legal advice, compliance certification, or a formal
+#FINTRAC gap assessment. Results reflect the answers provided and may not capture all obligations
+#applicable to your specific circumstances. Regulatory obligations under the PCMLTFA and associated
+#Regulations are complex and fact-specific. You should consult a qualified AML/ATF compliance
+#professional or legal counsel before relying on these results. All guidance links reference
+#<a href="https://fintrac-canafe.canada.ca" target="_blank">fintrac-canafe.canada.ca</a> —
+#always verify against the current published version.
+#</div>
+#""", unsafe_allow_html=True)
 
-    st.markdown("""
-<div class='copyright-footer'>
-    © Asset Tech an Alberta incorporated entity. All rights reserved. This tool is provided for informational purposes only.
-</div>
-""", unsafe_allow_html=True)
+    # ── Full Terms of Use (always visible for print) ──
+    st.markdown("---")
+    st.markdown(DISCLAIMER_TEXT)
+    st.caption("Last updated: April 06, 2026")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
     col1, col2 = st.columns(2)
@@ -605,6 +714,12 @@ always verify against the current published version.
         except Exception as e:
             st.info("💾 Use your browser's print function (Ctrl+P / Cmd+P) to save this report as PDF.")
 
+
+    st.markdown("""
+<div class='copyright-footer'>
+    &copy Asset Tech. All rights reserved.
+</div>
+""", unsafe_allow_html=True)
 
 # ─── Router ──────────────────────────────────────────────────────────────────────
 def main():

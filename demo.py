@@ -14,7 +14,7 @@ Usage in app.py:
 
 import streamlit as st
 
-DEMO_ENTITY     = "Financing or leasing entity"
+DEMO_ENTITY     = "Demo entity"
 DEMO_SIZE       = "26–100 (mid-size)"
 DEMO_OBLIGATION = "Less than 6 months"
 

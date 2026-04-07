@@ -79,7 +79,7 @@ class FINTRACReport(FPDF):
         self.set_font("Helvetica", "I", 7)
         self.set_text_color(150, 150, 150)
         self.cell(0, 5,
-                  f"© Asset Tech an Alberta incorporated entity. Preliminary self-assessment only — not legal advice.  |  Page {self.page_no()}",
+                  f"© Asset Tech. Preliminary self-assessment only — not legal advice.  |  Page {self.page_no()}",
                   align="C")
         self.set_text_color(*BLACK)
 
@@ -188,9 +188,10 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
     pdf.set_xy(box_x + 52, box_y + 12)
     pdf.cell(0, 6, "Overall Readiness Score", ln=True)
     pdf.set_text_color(*BLACK)
-    pdf.ln(10)
+    pdf.ln(6)
 
     # ── Pillar breakdown ─────────────────────────────────────────────────────────
+    pdf.add_page()
     pdf.section_heading("Compliance Pillar Breakdown")
     # Table header
     pdf.set_fill_color(230, 230, 230)
@@ -207,6 +208,7 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
     pdf.ln(6)
 
     # ── Priority gaps ────────────────────────────────────────────────────────────
+    pdf.add_page()
     all_gaps = []
     for sec_key, data in sections.items():
         label = SECTION_LABELS.get(sec_key, data.get("label", sec_key))
@@ -214,8 +216,8 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
             all_gaps.append({**gap, "section_label": label})
     all_gaps.sort(key=lambda x: x["score"])
 
+    pdf.section_heading("Priority Gaps")
     if all_gaps:
-        pdf.section_heading("Priority Gaps")
         red_gaps   = [g for g in all_gaps if g["score"] == 0][:8]
         amber_gaps = [g for g in all_gaps if g["score"] == 1][:6]
 
@@ -235,10 +237,15 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
             pdf.set_text_color(*BLACK)
             for g in amber_gaps:
                 pdf.gap_bullet(g["section_label"], g["q"], 1)
+    else:
+        pdf.set_font("Helvetica", "", 9)
+        pdf.set_text_color(*BLACK)
+        pdf.cell(0, 7, "No significant gaps identified.", ln=True)
 
     pdf.ln(4)
 
     # ── Action plan ──────────────────────────────────────────────────────────────
+    pdf.add_page()
     pdf.section_heading("Recommended Action Plan")
     newly_obligated = obligation_length in ["Less than 6 months", "6–18 months"]
     col_w = 55
@@ -311,6 +318,7 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
     pdf.ln(8)
 
     # ── FINTRAC Resources ────────────────────────────────────────────────────────
+    pdf.add_page()
     pdf.section_heading("Key FINTRAC Resources")
     resources = [
         ("Compliance Program Requirements",   "https://fintrac-canafe.canada.ca/guidance-directives/compliance-conformite/Guide4/4-eng"),
@@ -330,17 +338,81 @@ def generate_pdf(sections, overall_pct, entity_type, entity_size, obligation_len
 
     pdf.ln(4)
 
-    # ── Disclaimer ───────────────────────────────────────────────────────────────
-    pdf.set_fill_color(*GREY_LIGHT)
-    pdf.set_font("Helvetica", "I", 7)
-    pdf.set_text_color(100, 100, 100)
-    pdf.multi_cell(0, 5,
-        "DISCLAIMER: This assessment tool provides a high-level preliminary self-assessment only. "
-        "It does not constitute legal advice, compliance certification, or a formal FINTRAC gap assessment. "
-        "Results reflect the answers provided and may not capture all obligations applicable to your specific "
-        "circumstances. Consult a qualified AML/ATF compliance professional or legal counsel. "
-        "All guidance references: fintrac-canafe.canada.ca",
-        fill=True
-    )
+    # ── Disclaimer page ───────────────────────────────────────────────────────────
+    pdf.add_page()
+    pdf.section_heading("Disclaimer & Terms of Use")
+    pdf.set_font("Helvetica", "I", 7.5)
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(0, 5, "Last updated: April 06, 2026", ln=True)
+    pdf.ln(2)
+
+    clauses = [
+        ("1. Nature of Service",
+         "This tool is an automated self-assessment provided for educational and informational "
+         "purposes only. It is designed to help users identify potential compliance gaps at a high "
+         "level. It does not constitute legal, regulatory, accounting, financial, or professional "
+         "compliance advice. Use of this tool does not create a solicitor-client, consultant-client, "
+         "or any other professional advisory relationship."),
+        ("2. No Compliance Determination",
+         "Results are indicative only and are based solely on the answers selected by the user. "
+         "This tool does not certify compliance, does not constitute a FINTRAC assessment, and does "
+         "not guarantee compliance with the Proceeds of Crime (Money Laundering) and Terrorist "
+         "Financing Act (PCMLTFA), the associated regulations, FINTRAC guidance, or any other "
+         "federal, provincial, or territorial legal requirement. Regulatory obligations are "
+         "fact-specific and may differ based on entity type, activities, geography, and operating model."),
+        ("3. User Responsibility",
+         "The user is solely responsible for the accuracy, completeness, and truthfulness of all "
+         "inputs. The user is also responsible for independently verifying current legal and "
+         "regulatory requirements before acting on any output from this tool. Laws, regulations, "
+         "and FINTRAC guidance may change, and this tool may not reflect the most current version "
+         "at the time of use."),
+        ("4. Scope Limitation",
+         "This tool is limited to a preliminary AML/ATF self-assessment. It does not assess all "
+         "possible obligations under federal or provincial law, and it does not replace a formal "
+         "compliance program review, legal review, internal audit, or independent AML/ATF consultation."),
+        ("5. No Reliance",
+         "Users agree not to rely on this tool or its output as the sole basis for compliance "
+         "decisions, regulatory filings, or operational changes. Any reliance on the tool is at "
+         "the user's own risk."),
+        ("6. Data Handling and Privacy",
+         "This tool does not collect, store, or process client data, transaction data, or other "
+         "personally identifiable information through the questionnaire. Responses are anonymous "
+         "and used only to generate results within the current session. No analytics tools are "
+         "used on this site. If the tool is changed in the future to collect, store, or transmit "
+         "personal information, this statement must be updated before release."),
+        ("7. Limitation of Liability",
+         "To the maximum extent permitted by applicable law, Asset Tech, its owners, officers, "
+         "employees, contractors, affiliates, and agents shall not be liable for any direct, "
+         "indirect, incidental, consequential, special, exemplary, or punitive damages, losses, "
+         "penalties, fines, administrative monetary penalties, claims, costs, or expenses arising "
+         "from or related to the use of, or reliance on, this tool or its results."),
+        ("8. Indemnity",
+         "To the maximum extent permitted by law, the user agrees to indemnify, defend, and hold "
+         "harmless Asset Tech and its affiliates from and against any claims, liabilities, losses, "
+         "damages, costs, and expenses arising out of the user's use of this tool, the user's "
+         "inputs, the user's reliance on the results, or the user's failure to obtain appropriate "
+         "professional advice."),
+        ("9. Governing Law",
+         "These Terms of Use are governed by the laws of the Province of Alberta and the federal "
+         "laws of Canada applicable therein. Any dispute arising from or relating to this tool "
+         "shall be subject to the exclusive jurisdiction of the courts of Alberta, unless "
+         "applicable law requires otherwise."),
+        ("10. Changes and Availability",
+         "Asset Tech may update, suspend, or discontinue this tool or these Terms of Use at any "
+         "time without notice. Continued use of the tool after any update constitutes acceptance "
+         "of the revised terms."),
+        ("11. Acceptance",
+         "By checking the acceptance box and conducting the assessment, the user confirms that "
+         "they have read, understood, and agreed to these Terms of Use and Disclaimer."),
+    ]
+
+    for heading, body in clauses:
+        pdf.set_font("Helvetica", "B", 8)
+        pdf.set_text_color(*BLACK)
+        pdf.cell(0, 6, heading, ln=True)
+        pdf.set_font("Helvetica", "", 7.5)
+        pdf.set_text_color(80, 80, 80)
+        pdf.multi_cell(0, 5, body)
+        pdf.ln(2)
 
     return bytes(pdf.output())
