@@ -1104,7 +1104,7 @@ SECTOR_QUESTIONS = {
         },
         {
             "text": "Does your entity have procedures to identify and report suspicious life insurance transactions?",
-            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/indicators-indicateurs/li_mltf-eng)",
+            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/indicators-indicateurs/li_mltf-eng",
             "options": [
                 "Yes — life insurance-specific ML indicators are incorporated",
                 "Partial",

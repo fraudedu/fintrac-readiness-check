@@ -361,7 +361,7 @@ PILLAR_PAGES = {
                  "source": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/str-dod/str-dod-eng",
                  "key": "rep", "next": "recordkeeping", "prev": "kyc"},
     "recordkeeping": {"title": "Record Keeping",
-                 "source": "https://fintrac-canafe.canada.ca/re-ed/fin-eng",
+                 "source": "https://fintrac-canafe.canada.ca/guidance-directives/guidance-directives-eng#s4",
                  "key": "rec", "next": "directives", "prev": "reporting"},
     "directives":{"title": "Ministerial Directives",
                  "source": "https://fintrac-canafe.canada.ca/obligations/directives-eng",
