@@ -364,7 +364,7 @@ PILLAR_PAGES = {
                  "source": "https://fintrac-canafe.canada.ca/re-ed/fin-eng",
                  "key": "rec", "next": "directives", "prev": "reporting"},
     "directives":{"title": "Ministerial Directives",
-                 "source": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/min/min-eng",
+                 "source": "https://fintrac-canafe.canada.ca/obligations/directives-eng",
                  "key": "dir", "next": "sector", "prev": "recordkeeping"},
 }
 
