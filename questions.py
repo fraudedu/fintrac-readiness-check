@@ -64,10 +64,55 @@ def get_score(answer):
 
 # ─── Sector definitions ──────────────────────────────────────────────────────────
 SECTORS = {
+    "Acquirer services for private ABMs (ATMs)": {
+        "key": "abm", "label": "Private ABM Acquirers",
+        "new_2025": True,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/abm-gap-eng",
+    },
+    "Cheque casher": {
+        "key": "cheque", "label": "Cheque Cashers",
+        "new_2025": True,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/cheque-eng",
+    },
+    "Factor (accounts receivable financing)": {
+        "key": "factor", "label": "Factors",
+        "new_2025": True,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/fact-affact-eng",
+    },
+    "Financing or leasing entity": {
+        "key": "lease", "label": "Financing / Leasing Entities",
+        "new_2025": True,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/lease-bail-eng",
+    },
+    "Title insurer": {
+        "key": "title", "label": "Title Insurers",
+        "new_2025": True,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/title-titre-eng",
+    },
+    "Accountant or accounting firm": {
+        "key": "acct", "label": "Accountants",
+        "new_2025": False,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/accts-eng",
+    },
+    "Casino": {
+        "key": "casino", "label": "Casinos",
+        "new_2025": False,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/casinos-eng",
+    },
+    "Dealer in precious metals and precious stones": {
+        "key": "dpms", "label": "Dealers in Precious Metals/Stones",
+        "new_2025": False,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/dpms-eng",
+    },
     "Financial entity (bank, credit union, trust/loan company)": {
         "key": "fin", "label": "Financial Entities",
         "new_2025": False,
         "source": "https://fintrac-canafe.canada.ca/re-ed/fin-eng",
+    },
+    "Life insurance company, broker or agent": {
+        "key": "li", "label": "Life Insurance",
+        "new_2025": False,
+        "source": "https://fintrac-canafe.canada.ca/re-ed/li-eng",
     },
     "Money services business (MSB) — currency exchange, remittance, crypto": {
         "key": "msb", "label": "Money Services Businesses",
@@ -89,51 +134,6 @@ SECTORS = {
         "new_2025": False,
         "source": "https://fintrac-canafe.canada.ca/re-ed/sec-eng",
     },
-    "Life insurance company, broker or agent": {
-        "key": "li", "label": "Life Insurance",
-        "new_2025": False,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/li-eng",
-    },
-    "Cheque casher": {
-        "key": "cheque", "label": "Cheque Cashers",
-        "new_2025": True,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/cheque-eng",
-    },
-    "Factor (accounts receivable financing)": {
-        "key": "factor", "label": "Factors",
-        "new_2025": True,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/fact-affact-eng",
-    },
-    "Financing or leasing entity": {
-        "key": "lease", "label": "Financing / Leasing Entities",
-        "new_2025": True,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/lease-bail-eng",
-    },
-    "Acquirer services for private ABMs (ATMs)": {
-        "key": "abm", "label": "Private ABM Acquirers",
-        "new_2025": True,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/abm-gap-eng",
-    },
-    "Title insurer": {
-        "key": "title", "label": "Title Insurers",
-        "new_2025": True,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/title-titre-eng",
-    },
-    "Accountant or accounting firm": {
-        "key": "acct", "label": "Accountants",
-        "new_2025": False,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/accts-eng",
-    },
-    "Dealer in precious metals and precious stones": {
-        "key": "dpms", "label": "Dealers in Precious Metals/Stones",
-        "new_2025": False,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/dpms-eng",
-    },
-    "Casino": {
-        "key": "casino", "label": "Casinos",
-        "new_2025": False,
-        "source": "https://fintrac-canafe.canada.ca/re-ed/casinos-eng",
-    },
     "Other / Not sure": {
         "key": "other", "label": "Other",
         "new_2025": False,
@@ -149,7 +149,7 @@ PILLAR_QUESTIONS = {
     # ── Pillar 1: Compliance Officer ──
     "p1": [
         {
-            "text": "Has your entity designated a compliance officer responsible for implementing your AML/ATF compliance program?",
+            "text": "Has your entity designated a compliance officer responsible for implementing your AML/CFT compliance program?",
             "options": [
                 "Yes — formally appointed with written documentation",
                 "Yes — but the role is informal and not documented",
@@ -173,7 +173,7 @@ PILLAR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your compliance officer have documented AML/ATF knowledge or training relevant to your sector?",
+            "text": "Does your compliance officer have documented AML/CFT knowledge or training relevant to your sector?",
             "options": [
                 "Yes — formal training or certification on record",
                 "Partial — some knowledge but no formal training record",
@@ -193,7 +193,7 @@ PILLAR_QUESTIONS = {
     # ── Pillar 2: Policies & Procedures ──
     "p2": [
         {
-            "text": "Does your entity have written AML/ATF policies and procedures?",
+            "text": "Does your entity have written AML/CFT policies and procedures?",
             "options": [
                 "Yes — comprehensive, sector-specific, and currently in force",
                 "Yes — but they are generic/template-based and not tailored to your business",
@@ -219,15 +219,15 @@ PILLAR_QUESTIONS = {
             "options": ["Yes", "Partial", "No"],
         },
         {
-            "text": "Do your written policies cover beneficial ownership determination and third-party determination?",
-            "options": ["Yes", "Partial", "No"],
+            "text": "Do your written policies cover beneficial ownership determination and third-party determination (where applicable)?",
+            "options": ["Yes", "Partial", "No", "Not applicable"],
         },
         {
             "text": "Do your written policies cover PEP and HIO screening and enhanced due diligence?",
-            "options": ["Yes", "Partial", "No"],
+            "options": ["Yes", "Partial", "No", "Not applicable"],
         },
         {
-            "text": "Do your written policies cover transaction reporting (STR, LCTR, and EFTR where applicable)?",
+            "text": "Do your written policies cover transaction reporting (STR, LPEPR, LCTR, LVCTR, and EFTR where applicable)?",
             "options": ["Yes", "Partial", "No"],
         },
         {
@@ -327,7 +327,7 @@ PILLAR_QUESTIONS = {
     # ── Pillar 4: Training ──
     "p4": [
         {
-            "text": "Does your entity have a documented AML/ATF training program?",
+            "text": "Does your entity have a documented AML/CFT training program?",
             "options": [
                 "Yes — formal, documented, with training records per employee",
                 "Yes — training happens but is informal with no records",
@@ -343,9 +343,9 @@ PILLAR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does the training cover how and when to file an STR and an LCTR, including timing requirements?",
+            "text": "Does the training cover how and when to file an STR and an LCTR (where applicable), including timing requirements?",
             "options": [
-                "Yes — STR and LCTR filing procedures are part of training",
+                "Yes — STR and LCTR (where applicable) filing procedures are part of training",
                 "Partial — one or neither is covered",
                 "No",
             ],
@@ -469,7 +469,7 @@ PILLAR_QUESTIONS = {
                 "Yes — in compliance with the updated beneficial ownership requirements",
                 "Partial — some collection but not systematic or updated for 2025",
                 "No",
-                "Not applicable — our entity only has individual clients",
+                "Not applicable",
             ],
         },
         {
@@ -478,6 +478,7 @@ PILLAR_QUESTIONS = {
                 "Yes — third-party determination procedures are in place for relevant transactions",
                 "Partial",
                 "No",
+                "Not applicable",
             ],
         },
         {
@@ -487,6 +488,7 @@ PILLAR_QUESTIONS = {
                 "Yes — screening is done at onboarding AND on an ongoing basis",
                 "Partial — at onboarding only",
                 "No",
+                "Not applicable",
             ],
         },
         {
@@ -671,14 +673,6 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Has your entity registered with FINTRAC if required for your specific activities?",
-            "options": [
-                "Yes — registered",
-                "Not yet — registration is in progress",
-                "No — we were not aware registration may be required",
-            ],
-        },
-        {
             "text": "Has your entity identified which products and services trigger KYC obligations under the new leasing entity rules?",
             "hint": "Source: https://fintrac-canafe.canada.ca/guidance-directives/client-clientele/client/lease-bail-eng",
             "options": [
@@ -718,9 +712,18 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your entity have documented procedures to identify and report large cash transactions arising from cheque cashing above the $10,000 threshold?",
+            "text": "Has your entity registered as a Money Services Business (MSB) with FINTRAC as required by the 2025 regulations?",
+            "hint": "Source: https://fintrac-canafe.canada.ca/re-ed/cheque-eng",
             "options": [
-                "Yes — LCTR procedures are in place",
+                "Yes — registered",
+                "Registration in progress",
+                "No — not yet registered",
+            ],
+        },
+        {
+            "text": "Does your entity have documented procedures to identify and report listed person or entity property?",
+            "options": [
+                "Yes — LPEPR procedures are in place",
                 "Partial — aware of the requirement but not formalised",
                 "No",
             ],
@@ -744,7 +747,7 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your entity monitor for structuring — clients deliberately breaking transactions below $10,000 to avoid reporting?",
+            "text": "Does your entity monitor for structuring — clients deliberately breaking transactions below KYC thresholds to avoid ID verification?",
             "options": [
                 "Yes — staff are trained to identify and report structuring",
                 "Partial — aware of the risk but no formal monitoring",
@@ -791,7 +794,7 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Have staff been trained on the April 1, 2025 factor obligations, including how to identify and report suspicious transactions?",
+            "text": "Have staff been trained on the April 1, 2025 factor obligations, including how to identify and report suspicious transactions (and other applicable transactions)?",
             "options": [
                 "Yes — training completed",
                 "In progress",
@@ -812,7 +815,7 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Has your entity implemented client identification procedures for cash-out transactions above applicable thresholds at private ABMs?",
+            "text": "Has your entity implemented client identification procedures for any person or entity that you provide acquirer services in relation to private ABMs?",
             "options": [
                 "Yes — procedures are in place",
                 "Partial",
@@ -820,7 +823,7 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your entity have processes to detect and report unusual cash patterns at individual ABM locations (e.g. repeated transactions just below the $10,000 reporting threshold)?",
+            "text": "Does your entity have processes to detect and report unusual cash patterns at individual ABM locations?",
             "hint": "Structuring at ABMs is a known ML typology.",
             "options": [
                 "Yes — monitoring is in place and staff/systems are configured to flag this",
@@ -1051,12 +1054,12 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your entity monitor agents or sub-agents for AML compliance where applicable?",
+            "text": "Does your entity monitor the eligibility of agents or mandataries for AML compliance where applicable?",
             "options": [
                 "Yes — agent monitoring procedures are in place",
                 "Partial",
                 "No",
-                "Not applicable (no agents or sub-agents)",
+                "Not applicable (no agents or mandataries)",
             ],
         },
     ],
@@ -1100,7 +1103,8 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Does your entity have procedures to identify and report suspicious life insurance transactions (e.g. early policy surrender with penalty, unusual premium payment sources, third-party premium payers)?",
+            "text": "Does your entity have procedures to identify and report suspicious life insurance transactions?",
+            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/indicators-indicateurs/li_mltf-eng)",
             "options": [
                 "Yes — life insurance-specific ML indicators are incorporated",
                 "Partial",
@@ -1120,8 +1124,8 @@ SECTOR_QUESTIONS = {
     # ── Accountants ──
     "acct": [
         {
-            "text": "Does your entity have documented procedures to identify when an accounting engagement triggers FINTRAC reporting obligations (i.e. specific listed activities under the PCMLTFA)?",
-            "hint": "Not all accounting services trigger obligations — only specific activities such as receiving funds, buying/selling real estate, or managing client funds.",
+            "text": "Does your entity have documented procedures to identify when an accounting engagement triggers FINTRAC KYC obligations (i.e. specific listed activities under the PCMLTFA)?",
+            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/client-clientele/client/acc-eng",
             "options": [
                 "Yes — trigger activities are mapped and staff are trained",
                 "Partial — awareness exists but mapping is incomplete",
@@ -1138,6 +1142,7 @@ SECTOR_QUESTIONS = {
         },
         {
             "text": "Does your entity have sector-specific ML/TF indicators (e.g. clients asking to hold funds outside normal business purposes, unexplained offshore structures)?",
+            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/indicators-indicateurs/accts_mltf-eng",
             "options": [
                 "Yes — accounting sector indicators are incorporated",
                 "Partial — generic only",
@@ -1193,7 +1198,8 @@ SECTOR_QUESTIONS = {
             ],
         },
         {
-            "text": "Are casino staff trained on sector-specific ML/TF indicators (e.g. buy-in with cash then immediate cash-out, third-party chip purchases, purposeful losses)?",
+            "text": "Are casino staff trained on sector-specific ML/TF indicators?",
+            "hint": "https://fintrac-canafe.canada.ca/guidance-directives/transaction-operation/indicators-indicateurs/casinos_mltf-eng",
             "options": [
                 "Yes — casino-specific training is in place",
                 "Partial",

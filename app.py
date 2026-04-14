@@ -7,7 +7,7 @@ Run with: streamlit run app.py
 
 import streamlit as st
 import streamlit.components.v1
-from questions import SECTORS, PILLAR_QUESTIONS, SECTOR_QUESTIONS, SCORE_MAP
+from questions import SECTORS, PILLAR_QUESTIONS, SECTOR_QUESTIONS, SCORE_MAP, get_score
 from report import generate_report_html
 from demo import load_demo
 from pdf_export import generate_pdf
@@ -437,7 +437,9 @@ def compute_scores():
         for i, q in enumerate(questions):
             key = answer_key(section_key, i)
             ans = answers.get(key)
-            score = SCORE_MAP.get(ans, 0)
+            score = get_score(ans)
+            if score is None:   # not applicable — already handled below, so skip
+                continue
             if ans and ans.lower().startswith("not applicable"):
                 continue
             max_pts += 2
@@ -457,7 +459,9 @@ def compute_scores():
         for i, q in enumerate(s_questions):
             key = answer_key(f"sec_{sector_key}", i)
             ans = answers.get(key)
-            score = SCORE_MAP.get(ans, 0)
+            score = get_score(ans)
+            if score is None:   # not applicable — already handled below, so skip
+                continue
             if ans and ans.lower().startswith("not applicable"):
                 continue
             max_pts += 2
