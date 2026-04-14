@@ -20,8 +20,8 @@ PRODUCTS = {
             "Complete build checklist",
             "Relevant FINTRAC source links verified March 2026",
         ],
-        "price": "CAD $139",
-        "url": None,  # Replace with: "https://..."
+        "price": "CAD $169",
+        "url": "https://assettechca.gumroad.com/l/cpg_fle",  # Replace with: "https://..."
     },
     "factor": {
         "title": "FINTRAC Compliance Guide for Factors",
@@ -32,8 +32,8 @@ PRODUCTS = {
             "Complete build checklist",
             "Relevant FINTRAC source links verified March 2026",
         ],
-        "price": "CAD $139",
-        "url": None,  # Replace with: "https://..."
+        "price": "CAD $169",
+        "url": "https://assettechca.gumroad.com/l/cpg_ftr",  # Replace with: "https://..."
     },
     "cheque": {
         "title": "FINTRAC Compliance Guide for Cheque Cashers",
@@ -44,8 +44,8 @@ PRODUCTS = {
             "Complete build checklist",
             "Relevant FINTRAC source links verified March 2026",
         ],
-        "price": "CAD $139",
-        "url": None,  # Replace with: "https://..."
+        "price": "CAD $169",
+        "url": "https://assettechca.gumroad.com/l/cpg_cc",  # Replace with: "https://..."
     },
     "abm": {
         "title": "FINTRAC Compliance Guide for Private ABM Acquirers",
@@ -56,8 +56,8 @@ PRODUCTS = {
             "Complete build checklist",
             "Relevant FINTRAC source links verified March 2026",
         ],
-        "price": "CAD $139",
-        "url": None,  # Replace with: "https://..."
+        "price": "CAD $169",
+        "url": "https://assettechca.gumroad.com/l/cpg_abm",  # Replace with: "https://..."
     },
     "title": {
         "title": "FINTRAC Compliance Guide for Title Insurers",
@@ -68,8 +68,8 @@ PRODUCTS = {
             "Complete build checklist",
             "Relevant FINTRAC source links verified March 2026",
         ],
-        "price": "CAD $139",
-        "url": None,  # Replace with: "https://..."
+        "price": "CAD $169",
+        "url": "https://assettechca.gumroad.com/l/cpg_ti",  # Replace with: "https://..."
     },
 }
 
@@ -93,7 +93,7 @@ def render_offer_card(sector_key: str):
         st.markdown("### 📚 Need Help Building Your Program?")
         st.info(
             "Compliance guides for your sector are in development. "
-            "Follow Asset Tech founder on LinkedIn for updates."
+            "Subscribe to https://assettechca.gumroad.com/ for updates."
         )
         return
 
